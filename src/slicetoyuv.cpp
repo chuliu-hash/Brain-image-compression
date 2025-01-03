@@ -1,8 +1,4 @@
-#include <iostream>
-#include <string>
 #include <filesystem>
-#include <vector>
-#include <format>
 #include <itkImage.h>
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>

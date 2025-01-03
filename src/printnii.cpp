@@ -1,6 +1,3 @@
-#include <iostream>
-#include <string>
-#include <iomanip>  
 #include <vtkSmartPointer.h>
 #include <vtkImageData.h>
 #include <vtkMatrix4x4.h>
@@ -9,7 +6,7 @@
 #include <vtkImageHistogramStatistics.h>  
 #include <vtkDataArray.h>
 #include <vtkPointData.h>
-#include<Nifti_function.h>
+#include"Nifti_function.h"
 
 NiftiMetadata printNiftiMetadata(const std::string& inputNii) {
     // 创建 NIFTI 读取器，用于读取 NIfTI 格式的图像文件

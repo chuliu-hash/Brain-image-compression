@@ -1,10 +1,6 @@
 #include <itkImage.h>
 #include <itkImageFileWriter.h>
 #include <itkNiftiImageIO.h> 
-#include <cstdio>
-#include <vector>
-#include <string>
-#include <iostream>
 
 using InputPixelType = unsigned char;
 using OutputPixelType = short;

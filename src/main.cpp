@@ -1,7 +1,6 @@
-#include <process_function.h>
-#include <iostream>
-#include <x265Encoder.h>
-#include<Nifti_function.h>
+#include"process_function.h"
+#include"x265Encoder.h"
+#include"Nifti_function.h"
 
 int main()
 {
@@ -28,7 +27,7 @@ int main()
     int padded_width = (width + 1) & ~1;    // 向上取偶数
     int padded_height = (height + 1) & ~1;  // 向上取偶数
 
-    // 调用函数将NIfTI图像转换为YUV格式
+    // 调用函数将NIfTI图像转换为YUV420P格式
     processNiftiToYUV(inputNifti, outputYUV, padded_width, padded_height);
 
 

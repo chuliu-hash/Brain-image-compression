@@ -1,4 +1,5 @@
 #pragma once
+
 struct NiftiMetadata {
     int width;                  // 图像的宽度（以像素为单位）
     int height;                 // 图像的高度（以像素为单位）

@@ -1,6 +1,5 @@
 #pragma once
-#include<string>
-#include <x265Encoder.h>
+#include "x265Encoder.h"
 
 void processNiftiToYUV(const std::string& inputFile, const std::string& outputYUV,
     const int& padded_width, const int& padded_height);
