@@ -1,12 +1,12 @@
-﻿#include "X265Encoder.h"
+#include "X265Encoder.h"
 #include <fstream>
-
+#include<iostream>
 // 默认构造函数
-X265Encoder::X265Encoder(int width, int height)
+X265Encoder::X265Encoder(const int& width,const  int& height)
     : X265Encoder(width, height, EncoderParams()) {}
 
 // 自定义编码参数构造函数
-X265Encoder::X265Encoder(int width, int height, const EncoderParams& params) {
+X265Encoder::X265Encoder(const int& width,const int& height, const EncoderParams& params) {
     // 计算帧大小（YUV420格式：Y平面全分辨率，U和V平面半分辨率）
     frameSize = width * height * 3 / 2;
     frameBuffer.resize(frameSize);
@@ -49,21 +49,21 @@ X265Encoder::X265Encoder(int width, int height, const EncoderParams& params) {
     param->bEnableStrongIntraSmoothing = params.enableStrongIntraSmoothing;  // 强帧内平滑，改善平滑区域质量
 
     // 码率控制模式选择
-    if (params.mode == 3) {
+    if (params.mode == "Lossless") {
         param->rc.qp = 0;               // 无损编码时QP设为0
         param->bLossless = 1;           // 启用无损编码模式
     }
-    else if (params.mode == 0 && params.maxBitrate > 0) {
+    else if (params.mode == "CBR" ) {
         param->rc.rateControlMode = X265_RC_ABR;  // 平均码率模式(Average Bitrate)
-        param->rc.bitrate = params.maxBitrate;    // 目标平均码率(kbps)
-        param->rc.vbvMaxBitrate = params.maxBitrate;  // VBV最大码率限制
-        param->rc.vbvBufferSize = params.maxBitrate;  // VBV缓冲区大小，影响码率波动
+        param->rc.bitrate = params.Bitrate;    // 目标平均码率(kbps)
+        param->rc.vbvMaxBitrate = params.Bitrate;  // VBV最大码率限制
+        param->rc.vbvBufferSize = params.Bitrate;  // VBV缓冲区大小，影响码率波动
     }
-    else if (params.mode == 1) {
+    else if (params.mode == "CQP") {
         param->rc.rateControlMode = X265_RC_CQP;  // 固定QP模式(Constant Quantization Parameter)
         param->rc.qp = params.qp;                 // 固定的量化参数值
     }
-    else if (params.mode == 2) {
+    else if (params.mode == "CRF") {
         param->rc.rateControlMode = X265_RC_CRF;  // 恒定质量模式(Constant Rate Factor)
         param->rc.rfConstant = params.crf;        // CRF值(0-51)，值越小质量越高
     }

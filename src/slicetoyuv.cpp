@@ -18,7 +18,7 @@ using OutputImageType = itk::Image<OutputPixelType, 2>;
 void processNiftiToYUV(const std::string& inputFile, const std::string& outputYUV, const int& padded_width, const int& padded_height) {
     try {
         // 创建临时目录存放PNG序列
-        std::string tempDir = "D:/VScode/Capstone_project/CMakeProject1/resources/temp_slices";
+        std::string tempDir = "temp_slices";
         std::filesystem::create_directories(tempDir);  // 确保临时目录存在
 
         // 1. 读取和处理NIfTI文件
@@ -69,10 +69,7 @@ void processNiftiToYUV(const std::string& inputFile, const std::string& outputYU
             writer->SetInput(rescaler->GetOutput()); // 设置要写入的图像数据
             writer->Update(); // 执行文件写入
 
-            // 每处理10张切片打印一次进度
-            if (z % 10 == 0) {
-                std::cout << "Processed slice " << z << "/" << depth << std::endl;
-            }
+            std::cout << "Processed slice " << z + 1<< "/" << depth  << "\r"<<std::flush;
         }
 
         // 第二步：将PNG序列转换为YUV420P

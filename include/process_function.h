@@ -1,5 +1,10 @@
 #pragma once
 #include "x265Encoder.h"
+#include"NiftiMetadata.h"
+
+
+void compressNifti(const X265Encoder::EncoderParams& params, const NiftiMetadata& metadata);
+
 
 void processNiftiToYUV(const std::string& inputFile, const std::string& outputYUV,
     const int& padded_width, const int& padded_height);
@@ -8,3 +13,4 @@ void processYUVtoh265(const int& width, const int& height, const std::string& in
     const X265Encoder::EncoderParams& params);
 
 void processH265ToNifti(const std::string& inputHevc, const std::string& outputNifti, const int& width, const int& height, const int& depth);
+

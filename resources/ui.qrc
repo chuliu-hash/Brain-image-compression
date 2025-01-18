@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/ui">
+        <file>window.ico</file>
+    </qresource>
+</RCC>

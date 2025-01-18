@@ -1,6 +1,6 @@
 #pragma once
 #include <x265.h>
-#include <iostream>
+#include<string>
 #include <vector>
 
 class X265Encoder {
@@ -15,19 +15,19 @@ public:
         std::string preset = "medium";   // 编码预设
         std::string tune = "psnr";       // 优化目标
 
-        int crf = 28;                    // CRF值 (0-51)
-        int maxBitrate = 1000;           // 最大码率 (kbps)
+        double crf = 28;                    // CRF值 (0-51)
+        int Bitrate = 1000;           // 平均码率 (bps)
 
         bool enableSAO = false;          // 启用SAO
         bool enableLoopFilter = false;   // 启用环路滤波
         bool enableStrongIntraSmoothing = false;  // 强帧内平滑
 
-        int mode = 3;                    // 编码模式
+        std:: string mode = "Lossless";                    // 编码模式
     };
 
     // 构造函数
-    X265Encoder(int width, int height);
-    X265Encoder(int width, int height, const EncoderParams& params);
+    X265Encoder(const int& width,const int& height);
+    X265Encoder(const int& width,const int& height, const EncoderParams& params);
 
     // 析构函数
     ~X265Encoder();
