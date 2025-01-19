@@ -7,7 +7,7 @@ namespace fs = std::filesystem;
 
 
 
-void compressNifti(const X265Encoder::EncoderParams& params,  const NiftiMetadata& metadata)
+void compressNifti(const X265Encoder::EncoderParams& params,  const NiftiMetadata& metadata, const bool& restore_flag)
 {
     fs::path inputPath = metadata.filePath; // 输入文件路径
     fs::path outputDir = inputPath.parent_path() / "out"; // 输出目录路径
@@ -46,15 +46,13 @@ void compressNifti(const X265Encoder::EncoderParams& params,  const NiftiMetadat
     // 调用函数将YUV格式转换为H.265格式
     processYUVtoh265(padded_width, padded_height, outputYUV, outputH265, params);
 
-    std::cout << "\n\n\n开始转换H265toNifti...\n\n\n" << std::endl;
+    if (restore_flag)
+    {
+        std::cout << "\n\n\n开始转换H265toNifti...\n\n\n" << std::endl;
 
-    // 调用函数将H.265格式转换回NIfTI格式
-    processH265ToNifti(outputH265, outputNifti, width, height, depth);
+        // 调用函数将H.265格式转换回NIfTI格式
+        processH265ToNifti(outputH265, outputNifti);
 
-    // 显示原始NIfTI图像
-    //showNifti(inputNifti);
-    // 显示转换后的NIfTI图像
-    //showNifti(outputNifti);
-
+    }
 
 }

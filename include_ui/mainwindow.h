@@ -34,6 +34,12 @@ private slots:
 
     void on_batchcompress_action_triggered();
 
+    void on_restore_action_triggered();
+
+    void do_BatchReconstructionProgressed(const QString &message);
+
+    void do_BatchReconstructionFinished();
+
 private:
     Ui::MainWindow* ui;
 
@@ -43,7 +49,10 @@ private:
     void setParams();
     void startCompression();
     void startBatchCompression(const QList<NiftiMetadata>& metadataList);
+    void startBatchReconstruction(const QStringList& filePaths);
     void initializeVTKRenderer(QVTKOpenGLNativeWidget * widget, const std::string& filePath);
     void printNiftidata();
     void printH265data();
+    void unenableComponent();
+    void enableComponent();
 };

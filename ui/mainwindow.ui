@@ -699,6 +699,8 @@
    <addaction name="separator"/>
    <addaction name="batchcompress_action"/>
    <addaction name="separator"/>
+   <addaction name="restore_action"/>
+   <addaction name="separator"/>
   </widget>
   <action name="openfile_action">
    <property name="enabled">
@@ -725,6 +727,17 @@
    </property>
    <property name="toolTip">
     <string>批量压缩.nii文件</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="restore_action">
+   <property name="text">
+    <string>批量重建</string>
+   </property>
+   <property name="toolTip">
+    <string>批量将.h265压缩文件重建为.nii文件</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>

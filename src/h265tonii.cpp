@@ -1,17 +1,22 @@
 #include <itkImage.h>
 #include <itkImageFileWriter.h>
-#include <itkNiftiImageIO.h> 
+#include <itkNiftiImageIO.h>
+#include"process_function.h"
 
 using InputPixelType = unsigned char;
 using OutputPixelType = short;
 using InputImageType = itk::Image<InputPixelType, 3>;
 using OutputImageType = itk::Image<OutputPixelType, 3>;
 
-void processH265ToNifti(const std::string& inputHevc, const std::string& outputNifti, const int& width, const int& height, const int& depth) {
+void processH265ToNifti(const std::string& inputHevc, const std::string& outputNifti) {
+
+    int padded_width = 0, padded_height = 0, depth = 0;
+    getVideoInfo(inputHevc, padded_width, padded_height, depth);
+
+    // 计算原先的图像尺寸
+    int width = padded_width - 1;
+    int height = padded_height - 1;
     try {
-        // 计算填充后的HEVC视频尺寸，确保宽高是2的倍数
-        int padded_width = (width + 1) & ~1;    // 例如：197 -> 198
-        int padded_height = (height + 1) & ~1;  // 例如：233 -> 234
 
         // 1. 构建FFmpeg命令以解码HEVC视频
         std::string ffmpegCmd = "ffmpeg -y"

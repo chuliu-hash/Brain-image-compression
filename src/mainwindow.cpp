@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include"ui_mainwindow.h"
 #include <QFileDialog>
-#include"worker_compress.h"
+#include"worker.h"
 #include <filesystem>
 namespace fs = std::filesystem;
 
@@ -104,9 +104,7 @@ void MainWindow::on_pushButton_compress_clicked()
     if(!metadata.filePath.empty())
     {
         ui->plainTextEdit->appendPlainText("开始压缩文件");
-        ui->pushButton_compress->setEnabled(false);
-        ui->openfile_action->setEnabled(false);
-        ui->batchcompress_action->setEnabled(false);
+        unenableComponent();
         startCompression();
 
     }
@@ -179,9 +177,7 @@ void MainWindow::startBatchCompression(const QList<NiftiMetadata>& metadataList)
 void MainWindow::do_CompressionFinished(const QString &message)
 {
     ui->plainTextEdit->appendPlainText(message);
-    ui->pushButton_compress->setEnabled(true);
-    ui->openfile_action->setEnabled(true);
-    ui->batchcompress_action->setEnabled(true);
+    enableComponent();
     printH265data();
 
     fs::path inputPath = metadata.filePath; // 输入文件路径
@@ -194,9 +190,7 @@ void MainWindow::do_CompressionFinished(const QString &message)
 void MainWindow::do_BatchCompressionFinished()
 {
     ui->plainTextEdit->appendPlainText("批量压缩完成");
-    ui->pushButton_compress->setEnabled(true);
-    ui->openfile_action->setEnabled(true);
-    ui->batchcompress_action->setEnabled(true);
+    enableComponent();
 }
 
 void MainWindow::do_BatchCompressionProgressed(const QString &message)
@@ -279,12 +273,8 @@ void MainWindow::on_batchcompress_action_triggered()
         return;
     }
 
-
     setParams();
-
-    ui->pushButton_compress->setEnabled(false);
-    ui->openfile_action->setEnabled(false);
-    ui->batchcompress_action->setEnabled(false);
+    unenableComponent();
 
     // 存储所有文件的 metadata
     QList<NiftiMetadata> metadataList;
@@ -296,9 +286,68 @@ void MainWindow::on_batchcompress_action_triggered()
         metadataList.append(metadata_temp); // 添加到列表
 
         // 在 UI 中显示文件信息
-        ui->plainTextEdit->appendPlainText("打开文件: " + filePath);
     }
 
     // 调用批量压缩函数
+    ui->plainTextEdit->appendPlainText("开始批量压缩");
     startBatchCompression(metadataList);
+}
+void MainWindow::unenableComponent()
+{
+    ui->pushButton_compress->setEnabled(false);
+    ui->openfile_action->setEnabled(false);
+    ui->batchcompress_action->setEnabled(false);
+    ui->restore_action->setEnabled(false);
+}
+void MainWindow::enableComponent()
+{
+    ui->pushButton_compress->setEnabled(true);
+    ui->openfile_action->setEnabled(true);
+    ui->batchcompress_action->setEnabled(true);
+    ui->restore_action->setEnabled(true);
+}
+
+void MainWindow::on_restore_action_triggered()
+{
+    QStringList filePaths = QFileDialog::getOpenFileNames(
+        this,
+        "选择若干个h265文件",
+        "",
+        "h265 Files (*.h265 *.hevc)"
+        );
+    if (filePaths.isEmpty()) {
+        return;
+    }
+    unenableComponent();
+    ui->plainTextEdit->appendPlainText("开始批量重建");
+    startBatchReconstruction(filePaths);
+}
+
+void MainWindow::startBatchReconstruction(const QStringList& filePaths)
+{
+    QThread *thread = new QThread;
+    Worker *worker = new Worker(params);
+
+    worker->moveToThread(thread);
+
+    // 连接信号和槽
+    connect(thread, &QThread::started, worker, [worker, filePaths]() {
+        worker->reconstructBatch(filePaths);
+    });
+    connect(worker, &Worker::finished, thread, &QThread::quit);
+    connect(worker, &Worker::finished, worker, &Worker::deleteLater);
+    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+    connect(worker, &Worker::reconstructionFinished, this, &MainWindow::do_BatchReconstructionProgressed);
+    connect(worker, &Worker::finished, this, &MainWindow::do_BatchReconstructionFinished);
+    thread->start();
+}
+void MainWindow::do_BatchReconstructionProgressed(const QString &message)
+{
+    ui->plainTextEdit->appendPlainText(message);
+}
+
+void MainWindow::do_BatchReconstructionFinished()
+{
+    ui->plainTextEdit->appendPlainText("批量重建完成");
+    enableComponent();
 }
