@@ -68,13 +68,12 @@ void processNiftiToYUV(const std::string& inputFile, const std::string& outputYU
             writer->SetFileName(pngFilename);     // 设置文件名
             writer->SetInput(rescaler->GetOutput()); // 设置要写入的图像数据
             writer->Update(); // 执行文件写入
-
-            std::cout << "Processed slice " << z + 1<< "/" << depth  << "\r"<<std::flush;
         }
 
         // 第二步：将PNG序列转换为YUV420P
         // 构建FFmpeg命令
         std::string ffmpegCmd = "ffmpeg -y"
+           " -loglevel quiet"
             " -f image2"                    // 使用image2格式读取图片序列
             " -i " + tempDir + "/slice_%d.png"  // 输入PNG图片序列
             " -vf pad=" + std::to_string(padded_width) + ":" +
@@ -88,8 +87,6 @@ void processNiftiToYUV(const std::string& inputFile, const std::string& outputYU
         if (result != 0) {
             throw std::runtime_error("FFmpeg conversion failed");
         }
-
-        std::cout << "Conversion completed! Output file: " << outputYUV << std::endl;
     }
     catch (const itk::ExceptionObject& e) {
         std::cerr << "ITK error: " << e.what() << std::endl;

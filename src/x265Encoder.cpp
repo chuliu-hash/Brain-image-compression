@@ -1,9 +1,7 @@
 #include "X265Encoder.h"
 #include <fstream>
 #include<iostream>
-// 默认构造函数
-X265Encoder::X265Encoder(const int& width,const  int& height)
-    : X265Encoder(width, height, EncoderParams()) {}
+
 
 // 自定义编码参数构造函数
 X265Encoder::X265Encoder(const int& width,const int& height, const EncoderParams& params) {
@@ -91,7 +89,20 @@ X265Encoder::X265Encoder(const int& width,const int& height, const EncoderParams
     // 设置stride（步长）
     picIn->stride[0] = width;        // Y平面stride
     picIn->stride[1] = width / 2;    // U平面stride
-    picIn->stride[2] = width / 2;    // V平面stride
+    picIn->stride[2] = width / 2;    //
+
+
+    // Example: Embed a string as SEI message
+    const char *message = "This is a test SEI message";
+    size_t message_size = strlen(message);
+
+    // Allocate memory for SEI payload
+    uint8_t *sei_payload = (uint8_t *)malloc(message_size);
+    memcpy(sei_payload, message, message_size);
+
+    // Attach SEI message to the frame
+    picIn->userData = sei_payload;
+
 }
 
 // 析构函数
@@ -115,9 +126,10 @@ void X265Encoder::encode(const std::string& inputFile, const std::string& output
     uint32_t numNals = 0;      // NAL单元数量
     int ret;                   // 编码返回值
     int frameCount = 0;        // 已编码帧数
-
     // 循环读取并编码每一帧
     while (inFile.read(reinterpret_cast<char*>(frameBuffer.data()), frameSize)) {
+
+
         // 编码当前帧
         ret = x265_encoder_encode(encoder, &nals, &numNals, picIn, nullptr);
 

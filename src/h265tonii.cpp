@@ -1,7 +1,9 @@
+#include <filesystem>
 #include <itkImage.h>
 #include <itkImageFileWriter.h>
 #include <itkNiftiImageIO.h>
 #include"process_function.h"
+
 
 using InputPixelType = unsigned char;
 using OutputPixelType = short;
@@ -11,21 +13,39 @@ using OutputImageType = itk::Image<OutputPixelType, 3>;
 void processH265ToNifti(const std::string& inputHevc, const std::string& outputNifti) {
 
     int padded_width = 0, padded_height = 0, depth = 0;
-    getVideoInfo(inputHevc, padded_width, padded_height, depth);
+    getVideoInfo(inputHevc, padded_width, padded_height);
 
-    // 计算原先的图像尺寸
-    int width = padded_width - 1;
-    int height = padded_height - 1;
+    // 获取 TXT 文件路径
+    std::filesystem::path hevcPath(inputHevc);
+    std::filesystem::path txtFilePath = hevcPath.parent_path() / (hevcPath.stem().string() + ".txt");
+
+    int width = 0, height = 0;
+    bool isPadded = true;
+
+    // 从 TXT 文件中读取原始的 width, height 和 depth
+    if (readDimensionsFromTxt(txtFilePath.string(), width, height, depth)) {
+        // 比较 padded 和原始尺寸
+        if (width == padded_width && height == padded_height) {
+            isPadded = false;
+        }
+    } else {
+        std::cerr << "Using padded dimensions as fallback." << std::endl;
+        width = padded_width;
+        height = padded_height;
+    }
+
+
+
     try {
 
         // 1. 构建FFmpeg命令以解码HEVC视频
         std::string ffmpegCmd = "ffmpeg -y"
+            " -loglevel quiet"
             " -i " + inputHevc +
             " -f rawvideo"
             " -pix_fmt gray"  // 输出为灰度格式
             " pipe:1";        // 将输出发送到管道
 
-        std::cout << "执行FFmpeg命令: " << ffmpegCmd << std::endl;
 
         // 2. 创建管道以读取FFmpeg输出
         FILE* pipe = _popen(ffmpegCmd.c_str(), "rb");
@@ -76,15 +96,23 @@ void processH265ToNifti(const std::string& inputHevc, const std::string& outputN
 
         // 5. 从填充数据中裁剪到原始尺寸
         InputPixelType* inputBuffer = inputImage->GetBufferPointer();
-        for (int z = 0; z < depth; z++) {
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    // 计算填充后和原始图像的索引
-                    size_t paddedIndex = z * (padded_width * padded_height) + y * padded_width + x;
-                    size_t originalIndex = z * (width * height) + y * width + x;
-                    inputBuffer[originalIndex] = paddedBuffer[paddedIndex]; // 裁剪数据
+
+        if (isPadded) {
+            // 如果填充了，需要裁剪数据
+            for (int z = 0; z < depth; z++) {
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        // 计算填充后和原始图像的索引
+                        size_t paddedIndex = z * (padded_width * padded_height) + y * padded_width + x;
+                        size_t originalIndex = z * (width * height) + y * width + x;
+                        inputBuffer[originalIndex] = paddedBuffer[paddedIndex]; // 裁剪数据
+                    }
                 }
             }
+        } else {
+            // 如果未填充，直接复制数据
+            size_t originalSize = width * height * depth;
+            std::memcpy(inputBuffer, paddedBuffer.data(), originalSize * sizeof(InputPixelType));
         }
 
         // 6. 设置输出图像并分配内存
@@ -116,7 +144,6 @@ void processH265ToNifti(const std::string& inputHevc, const std::string& outputN
 
         try {
             writer->Update(); // 执行文件写入
-            std::cout << "NIFTI文件保存成功" << std::endl;
         }
         catch (itk::ExceptionObject& e) {
             throw std::runtime_error(std::string("保存NIFTI文件失败: ") + e.what());

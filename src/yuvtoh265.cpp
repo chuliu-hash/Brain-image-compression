@@ -1,7 +1,7 @@
 #include "x265Encoder.h"
 #include<iostream>
 
-void processYUVtoh265(const int& width, const int& height,const std:: string& inputFile,const std::string& outputFile, 
+void processYUVtoh265(const int& width, const int& height, const std:: string& inputFile, const std::string& outputFile,
     const X265Encoder::EncoderParams& params) {
     try {
 

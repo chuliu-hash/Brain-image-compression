@@ -12,4 +12,7 @@ void processYUVtoh265(const int& width, const int& height, const std::string& in
 
 void processH265ToNifti(const std::string& inputHevc, const std::string& outputNifti);
 
-void getVideoInfo(const std::string& filePath, int& width, int& height, int& frameCount);
+void getVideoInfo(const std::string& filePath, int& width, int& height);
+
+bool readDimensionsFromTxt(const std::string& txtFilePath, int& width, int& height, int& depth);
+

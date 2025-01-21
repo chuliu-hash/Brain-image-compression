@@ -5,7 +5,7 @@ void Worker::compress()
 {
     compressNifti(m_params, m_metadata, true);
 
-    emit compressionFinished("压缩完成,输出H265文件");
+    emit compressionFinished("压缩完成,输出H265文件到out目录");
 
 }
 
@@ -39,7 +39,7 @@ void Worker::reconstructBatch(const QStringList& filePaths)
         QString baseName = fileInfo.baseName(); // 输入文件名（不含扩展名）
 
         // 创建 restore 目录
-        QString restoreDir = inputDir + "/restore";
+        QString restoreDir = inputDir + "/reconstruction";
         QDir dir(restoreDir);
         if (!dir.exists()) {
             dir.mkpath("."); // 如果目录不存在，则创建

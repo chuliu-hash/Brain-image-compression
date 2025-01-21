@@ -181,7 +181,6 @@ void MainWindow::do_CompressionFinished(const QString &message)
     printH265data();
 
     fs::path inputPath = metadata.filePath; // 输入文件路径
-    fs::path outputDir = inputPath.parent_path() / "out"; // 输出目录路径
     std::string inputStem = inputPath.stem().string();
     std::string NiftiPath = inputStem + "_restored.nii";
     initializeVTKRenderer(ui->widget_restore, NiftiPath);
@@ -189,7 +188,7 @@ void MainWindow::do_CompressionFinished(const QString &message)
 
 void MainWindow::do_BatchCompressionFinished()
 {
-    ui->plainTextEdit->appendPlainText("批量压缩完成");
+    ui->plainTextEdit->appendPlainText("批量压缩完成，输出文件到out目录");
     enableComponent();
 }
 
@@ -348,6 +347,6 @@ void MainWindow::do_BatchReconstructionProgressed(const QString &message)
 
 void MainWindow::do_BatchReconstructionFinished()
 {
-    ui->plainTextEdit->appendPlainText("批量重建完成");
+    ui->plainTextEdit->appendPlainText("批量重建完成，输出文件到reconstruction目录");
     enableComponent();
 }

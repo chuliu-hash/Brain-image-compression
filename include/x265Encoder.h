@@ -26,7 +26,6 @@ public:
     };
 
     // 构造函数
-    X265Encoder(const int& width,const int& height);
     X265Encoder(const int& width,const int& height, const EncoderParams& params);
 
     // 析构函数
