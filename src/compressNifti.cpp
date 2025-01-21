@@ -4,8 +4,6 @@
 #include <filesystem>
 namespace fs = std::filesystem;
 
-
-
 void compressNifti(const X265Encoder::EncoderParams& params,  const NiftiMetadata& metadata, const bool& restore_flag)
 {
     fs::path inputPath = metadata.filePath; // 输入文件路径

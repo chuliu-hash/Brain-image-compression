@@ -12,14 +12,14 @@ using OutputImageType = itk::Image<OutputPixelType, 3>;
 
 void processH265ToNifti(const std::string& inputHevc, const std::string& outputNifti) {
 
-    int padded_width = 0, padded_height = 0, depth = 0;
+    int padded_width = 0, padded_height = 0;
     getVideoInfo(inputHevc, padded_width, padded_height);
 
     // 获取 TXT 文件路径
     std::filesystem::path hevcPath(inputHevc);
     std::filesystem::path txtFilePath = hevcPath.parent_path() / (hevcPath.stem().string() + ".txt");
 
-    int width = 0, height = 0;
+    int width = 0, height = 0, depth = 0;
     bool isPadded = true;
 
     // 从 TXT 文件中读取原始的 width, height 和 depth
