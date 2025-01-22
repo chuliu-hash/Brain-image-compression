@@ -16,12 +16,20 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+
+# 这里的作用是让CMKAE把入口点改成WinMain，
+# 因为以main为入口点在Windows上被视为控制台程序，
+# 会自动打开一个控制台窗口，而GUI程序以WinMain为入口点，不会自动分配控制台窗口
+if(WIN32)
+
+  set(CMAKE_WIN32_EXECUTABLE ON)
+
+endif()
+
 # 设置第三方库的 CMake 配置文件路径
 set(ITK_DIR "D:/VScode/Capstone_project/third_party/ITK-5.3/lib/cmake/ITK-5.3")
 set(VTK_DIR "D:/VScode/Capstone_project/third_party/VTK-9.3/lib/cmake/vtk-9.3")
 set(Qt6_DIR "D:/Qt/6.5.3/msvc2019_64/lib/cmake/Qt6")
-
-# 设置 x265 库的根目录
 set(X265_ROOT_DIR "D:/VScode/Capstone_project/third_party/x265")
 
 # 查找 x265 库文件
@@ -35,30 +43,31 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)  # 查找 Qt6 的核心�
 find_package(VTK REQUIRED)  # 查找 VTK 库
 find_package(ITK REQUIRED)  # 查找 ITK 库
 
-# 使用 GLOB 自动收集 src 目录下的所有 .cpp 文件
-file(GLOB SOURCES "src/*.cpp")
 
 # 定义 .ui 文件列表
 set(UI_FILES
     ui/mainwindow.ui  # 主窗口的 UI 文件
 )
-
+# 定义 .qrc 文件列表
 set(RESOURCE_FILES
-    resources/ui.qrc  # 主窗口的 UI 文件
+    resources/ui.qrc  #  资源文件
 )
 
 # 使用 qt_wrap_ui 将 .ui 文件转换为对应的 ui_*.h 文件
 qt_wrap_ui(UI_HEADERS ${UI_FILES})
 
-# 使用 GLOB 自动收集 include_ui 目录下的所有 .h 文件
-file(GLOB HEADERS "include_ui/*.h")
+# 使用 GLOB 自动收集 include目录下的所有 .h 文件
+file(GLOB HEADERS "include_ui/*.h" "include/*.h")
+
+# 使用 GLOB 自动收集 src 目录下的所有 .cpp 文件
+file(GLOB SOURCES "src/*.cpp")
 
 # 添加可执行文件，并指定源文件、生成的 UI 头文件和 UI 头文件
 add_executable( ${PROJECT_NAME}
     ${SOURCES}    # 源文件（.cpp）
     ${UI_HEADERS} # 生成的 UI 头文件（ui_*.h）
-    ${HEADERS}    # UI 头文件（包含 Q_OBJECT 的头文件）
-    ${RESOURCE_FILES}
+    ${HEADERS}    # 头文件（.h）
+    ${RESOURCE_FILES}   # 资源文件（.qrc）
 )
 
 # 设置包含目录
