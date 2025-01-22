@@ -273,9 +273,6 @@ void MainWindow::initializeVTKRenderer(QVTKOpenGLNativeWidget * widget, const st
     widget->renderWindow()->Render();
 }
 
-
-
-
 void MainWindow::on_batchcompress_action_triggered()
 {
 
