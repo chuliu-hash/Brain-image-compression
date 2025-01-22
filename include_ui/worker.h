@@ -42,5 +42,6 @@ private:
     X265Encoder::EncoderParams m_params;
     // NiftiMetadata参数
     NiftiMetadata m_metadata;
-};
+};
+
 
