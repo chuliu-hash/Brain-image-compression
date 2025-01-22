@@ -9,7 +9,7 @@ void getVideoInfo(const std::string& filePath, int& width, int& height) {
     // 构建 ffprobe 命令获取分辨率
     std::string resolutionCommand = "ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 " + filePath;
 
-    // 调用 _popen 执行命令（Windows 专用）
+    // 调用 _popen 执行命令
     FILE* pipe = _popen(resolutionCommand.c_str(), "r");
     if (!pipe) {
         std::cerr << "无法调用 ffprobe 命令" << std::endl;

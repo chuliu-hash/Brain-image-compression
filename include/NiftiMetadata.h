@@ -25,7 +25,8 @@ public:
    // 将元数据保存到txt文件中
    void saveMetadataToTxt() const;
    // 显示Nifti图像
-   void showNifti(const std::string& inputNii);
 };
+
+void showNifti(const std::string& inputNii);
 
 

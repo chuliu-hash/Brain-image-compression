@@ -18,6 +18,7 @@ VTK_MODULE_INIT(vtkRenderingFreeType);       // 用于文本渲染
 
 void showNifti(const std::string& inputNii)
 {
+
     // 创建 NIFTI 读取器，用于读取 NIfTI 格式的图像文件
     vtkSmartPointer<vtkNIFTIImageReader> reader =
         vtkSmartPointer<vtkNIFTIImageReader>::New();
