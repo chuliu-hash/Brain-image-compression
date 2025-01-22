@@ -89,19 +89,8 @@ X265Encoder::X265Encoder(const int& width,const int& height, const EncoderParams
     // 设置stride（步长）
     picIn->stride[0] = width;        // Y平面stride
     picIn->stride[1] = width / 2;    // U平面stride
-    picIn->stride[2] = width / 2;    //
+    picIn->stride[2] = width / 2;    // V平面stride
 
-
-    // Example: Embed a string as SEI message
-    const char *message = "This is a test SEI message";
-    size_t message_size = strlen(message);
-
-    // Allocate memory for SEI payload
-    uint8_t *sei_payload = (uint8_t *)malloc(message_size);
-    memcpy(sei_payload, message, message_size);
-
-    // Attach SEI message to the frame
-    picIn->userData = sei_payload;
 
 }
 

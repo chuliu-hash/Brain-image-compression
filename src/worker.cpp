@@ -3,33 +3,43 @@
 
 void Worker::compress()
 {
+    // 调用压缩函数，对m_params和m_metadata进行压缩
     compressNifti(m_params, m_metadata, true);
 
+    // 发送压缩完成信号，提示压缩完成，输出H265文件到out目录
     emit compressionFinished("压缩完成,输出H265文件到out目录");
 
 }
 
 void Worker::compressBatch(const QList<NiftiMetadata>& metadataList)
 {
+    // 获取metadataList的大小
     int totalFiles = metadataList.size();
     int currentFile = 0;
 
+    // 遍历metadataList
     for (const auto& metadata : metadataList) {
         currentFile++;
+        // 调用压缩函数，对metadata进行压缩
         compressNifti(m_params, metadata);
+        // 构造进度信息
         QString progressInfo = QString("%1/%2").arg(currentFile).arg(totalFiles);
+        // 发送压缩完成信号，提示压缩完成，并显示进度信息
         emit compressionFinished("压缩完成: " + QString::fromStdString(metadata.filePath) + " - 进度: " + progressInfo);
 
     }
 
+    // 发送完成信号，提示压缩完成
     emit finished();
 }
 
 void Worker::reconstructBatch(const QStringList& filePaths)
 {
+    // 获取filePaths的大小
     int totalFiles = filePaths.size();
     int currentFile = 0;
 
+    // 遍历filePaths
     for (const auto& h265Path : filePaths) {
         currentFile++;
 
@@ -53,8 +63,10 @@ void Worker::reconstructBatch(const QStringList& filePaths)
 
         // 更新进度信息
         QString progressInfo = QString("%1/%2").arg(currentFile).arg(totalFiles);
+        // 发送重建完成信号，提示重建完成，并显示进度信息
         emit reconstructionFinished("重建完成: " + h265Path + " - 进度: " + progressInfo);
     }
 
+    // 发送完成信号，提示重建完成
     emit finished();
 }

@@ -20,9 +20,12 @@ public:
 
    NiftiMetadata() = default;
 
+   // 设置Nifti元数据
    void setNiftiMetadata(const std::string& path);
+   // 将元数据保存到txt文件中
    void saveMetadataToTxt() const;
-    void showNifti();
+   // 显示Nifti图像
+   void showNifti(const std::string& inputNii);
 };
 
 

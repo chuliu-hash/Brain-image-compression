@@ -8,17 +8,17 @@ void compressNifti(const X265Encoder::EncoderParams& params,  const NiftiMetadat
 {
     fs::path inputPath = metadata.filePath; // 输入文件路径
     fs::path outputDir = inputPath.parent_path() / "out"; // 输出目录路径
-    std::string inputStem = inputPath.stem().string();
+    std::string inputStem = inputPath.stem().string();  // 输入文件名（无扩展名）
 
     // 如果输出目录不存在，则创建
     if (!fs::exists(outputDir)) {
         fs::create_directory(outputDir);
     }
 
-    std::string inputNifti  = metadata.filePath;
-    std::string outputYUV = "temp.yuv";
-    std::string outputH265 =(outputDir / (inputStem + ".h265")).string();
-    std::string outputNifti =    inputStem + "_restored.nii";
+    std::string inputNifti  = metadata.filePath; // 输入的NIfTI文件路径
+    std::string outputYUV = "temp.yuv";          // 输出的YUV文件路径
+    std::string outputH265 =(outputDir / (inputStem + ".h265")).string();   // 输出的H.265文件路径
+    std::string outputNifti =    inputStem + "_restored.nii";   // 输出的NIfTI文件路径（恢复后的）
 
     // 获取原始图像维度
     int width = metadata.width;   // 图像宽度

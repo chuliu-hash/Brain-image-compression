@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 # 定义项目名称
-project(CMakeProject1)
+project("Compress_System")
 
 # 设置 C++ 标准为 C++17，并强制要求使用该标准
 set(CMAKE_CXX_STANDARD 17)
@@ -54,7 +54,7 @@ qt_wrap_ui(UI_HEADERS ${UI_FILES})
 file(GLOB HEADERS "include_ui/*.h")
 
 # 添加可执行文件，并指定源文件、生成的 UI 头文件和 UI 头文件
-add_executable(${PROJECT_NAME}
+add_executable( ${PROJECT_NAME}
     ${SOURCES}    # 源文件（.cpp）
     ${UI_HEADERS} # 生成的 UI 头文件（ui_*.h）
     ${HEADERS}    # UI 头文件（包含 Q_OBJECT 的头文件）

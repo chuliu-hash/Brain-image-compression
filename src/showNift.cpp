@@ -14,6 +14,7 @@ VTK_MODULE_INIT(vtkRenderingFreeType);       // 用于文本渲染
 #include <vtkVolumeProperty.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkPiecewiseFunction.h>
+#include "NiftiMetadata.h"
 
 void showNifti(const std::string& inputNii)
 {
