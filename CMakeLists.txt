@@ -48,6 +48,7 @@ find_package(ITK REQUIRED)  # 查找 ITK 库
 set(UI_FILES
     ui/mainwindow.ui  # 主窗口的 UI 文件
 )
+
 # 定义 .qrc 文件列表
 set(RESOURCE_FILES
     resources/ui.qrc  #  资源文件
