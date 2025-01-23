@@ -16,21 +16,12 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-
-# 这里的作用是让CMKAE把入口点改成WinMain，
-# 因为以main为入口点在Windows上被视为控制台程序，
-# 会自动打开一个控制台窗口，而GUI程序以WinMain为入口点，不会自动分配控制台窗口
-if(WIN32)
-
-  set(CMAKE_WIN32_EXECUTABLE ON)
-
-endif()
-
 # 设置第三方库的 CMake 配置文件路径
 set(ITK_DIR "D:/VScode/Capstone_project/third_party/ITK-5.3/lib/cmake/ITK-5.3")
 set(VTK_DIR "D:/VScode/Capstone_project/third_party/VTK-9.3/lib/cmake/vtk-9.3")
 set(Qt6_DIR "D:/Qt/6.5.3/msvc2019_64/lib/cmake/Qt6")
 set(X265_ROOT_DIR "D:/VScode/Capstone_project/third_party/x265")
+set(FFMPEG_ROOT "D:/VScode/Capstone_project/third_party/ffmpeg")  
 
 # 查找 x265 库文件
 find_library(X265_LIBRARY
@@ -42,7 +33,6 @@ find_library(X265_LIBRARY
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)  # 查找 Qt6 的核心、GUI 和 Widgets 模块
 find_package(VTK REQUIRED)  # 查找 VTK 库
 find_package(ITK REQUIRED)  # 查找 ITK 库
-
 
 # 定义 .ui 文件列表
 set(UI_FILES
@@ -64,12 +54,14 @@ file(GLOB HEADERS "include_ui/*.h" "include/*.h")
 file(GLOB SOURCES "src/*.cpp")
 
 # 添加可执行文件，并指定源文件、生成的 UI 头文件和 UI 头文件
-add_executable( ${PROJECT_NAME}
+add_executable( ${PROJECT_NAME}  WIN32
     ${SOURCES}    # 源文件（.cpp）
     ${UI_HEADERS} # 生成的 UI 头文件（ui_*.h）
     ${HEADERS}    # 头文件（.h）
     ${RESOURCE_FILES}   # 资源文件（.qrc）
 )
+
+
 
 # 设置包含目录
 target_include_directories(${PROJECT_NAME} PRIVATE

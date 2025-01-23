@@ -39,40 +39,15 @@ void processH265ToNifti(const std::string& inputHevc, const std::string& outputN
     }
 
     try {
-
-        // 1. 构建FFmpeg命令以解码HEVC视频
-        std::string ffmpegCmd = "ffmpeg -y"
-            " -loglevel quiet"
-            " -i " + inputHevc +
-            " -f rawvideo"
-            " -pix_fmt gray"  // 输出为灰度格式
-            " pipe:1";        // 将输出发送到管道
-
-
-        // 2. 创建管道以读取FFmpeg输出
-        FILE* pipe = _popen(ffmpegCmd.c_str(), "rb");
-        if (!pipe) {
-            throw std::runtime_error("无法创建FFmpeg管道");
-        }
-
         // 3. 创建临时缓冲区以存储填充后的数据
         std::vector<InputPixelType> paddedBuffer(padded_width * padded_height * depth);
 
         // 读取填充后的数据
         size_t paddedSize = padded_width * padded_height * depth;
-        size_t readSize = fread(paddedBuffer.data(), sizeof(InputPixelType), paddedSize, pipe);
 
-        // 关闭管道
-        int pipeStatus = _pclose(pipe);
-        if (pipeStatus != 0) {
-            throw std::runtime_error("FFmpeg执行失败");
-        }
+        // 3. 执行FFmpeg命令并读取数据
+        paddedBuffer = runFFmpegCommand(inputHevc, paddedSize);
 
-        // 检查读取的数据是否完整
-        if (readSize != paddedSize) {
-            throw std::runtime_error("数据读取不完整: 预期 " + std::to_string(paddedSize) +
-                " 字节，实际读取 " + std::to_string(readSize) + " 字节");
-        }
 
         // 4. 创建输入和输出图像对象（使用原始尺寸）
         auto inputImage = InputImageType::New();
@@ -96,7 +71,6 @@ void processH265ToNifti(const std::string& inputHevc, const std::string& outputN
         inputImage->Allocate();
         inputImage->FillBuffer(0); // 初始化为0
 
-        // 5. 从填充数据中裁剪到原始尺寸
         InputPixelType* inputBuffer = inputImage->GetBufferPointer();
 
         if (isPadded) {
@@ -148,12 +122,11 @@ void processH265ToNifti(const std::string& inputHevc, const std::string& outputN
             writer->Update(); // 执行文件写入
         }
         catch (itk::ExceptionObject& e) {
-            throw std::runtime_error(std::string("保存NIFTI文件失败: ") + e.what());
+            std::cerr << "保存NIFTI文件失败: " << e.what() << std::endl;
         }
     }
     catch (const std::exception& e) {
         std::cerr << "转换过程出错: " << e.what() << std::endl;
-        throw;
     }
 }
 

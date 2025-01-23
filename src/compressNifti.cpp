@@ -2,6 +2,7 @@
 #include"x265Encoder.h"
 #include"NiftiMetadata.h"
 #include <filesystem>
+
 namespace fs = std::filesystem;
 
 void compressNifti(const X265Encoder::EncoderParams& params,  const NiftiMetadata& metadata, const bool& restore_flag)

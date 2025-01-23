@@ -4,13 +4,17 @@
 #include <QFileInfo>
 #include <QDir>
 #include "x265Encoder.h"
-#include"NiftiMetadata.h"
+#include "NiftiMetadata.h"
 
 // 定义一个名为Worker的类，继承自QObject
 class Worker : public QObject
 {
     Q_OBJECT
 public:
+
+    //默认构造函数
+    Worker() = default;
+
     // 构造函数，传入X265Encoder::EncoderParams和NiftiMetadata参数
     Worker(const X265Encoder::EncoderParams &params,const NiftiMetadata &metadata)
         : m_params(params), m_metadata(metadata) {}

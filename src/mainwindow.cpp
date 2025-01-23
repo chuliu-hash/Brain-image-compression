@@ -2,7 +2,7 @@
 #include"ui_mainwindow.h"
 #include <QFileDialog>
 #include"worker.h"
-
+#include"streambuffer.h"
 #include <filesystem>
 namespace fs = std::filesystem;
 
@@ -23,7 +23,18 @@ MainWindow::MainWindow(QWidget* parent)
     , ui(new Ui::MainWindow)  // 初始化 ui 指针
 {
     ui->setupUi(this);  // 设置 UI
-    this->setFixedSize(900, 700);
+    this->setFixedSize(900, 700);   // 设置固定的窗口大小
+
+    // 创建一个指向 StreamBuffer 的 unique_ptr
+    m_coutBuffer = std::make_unique<StreamBuffer>(ui->plainTextEdit);
+    // 创建一个指向 StreamBuffer 的 unique_ptr
+    m_cerrBuffer = std::make_unique<StreamBuffer>(ui->plainTextEdit);
+    // 将 std::cout 的缓冲区设置为 m_coutBuffer
+    std::cout.rdbuf(m_coutBuffer.get());
+    // 将 std::cerr 的缓冲区设置为 m_cerrBuffer
+    std::cerr.rdbuf(m_cerrBuffer.get());
+
+    
 }
 
 // 析构函数
@@ -36,6 +47,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_openfile_action_triggered()
 {
+
    // 弹出文件选择对话框，选择单个NIfTI文件
    QString temp =  QFileDialog::getOpenFileName(this, "选择单个NIfTI文件 ", "", "NIfTI Files (*.nii *.nii.gz)");
     if (!temp.isEmpty())
@@ -346,7 +358,7 @@ void MainWindow::startBatchReconstruction(const QStringList& filePaths)
 {
     // 创建新线程和Worker对象
     QThread *thread = new QThread;
-    Worker *worker = new Worker(params);
+    Worker *worker = new Worker();
 
     worker->moveToThread(thread);
 

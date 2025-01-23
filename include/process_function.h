@@ -1,6 +1,10 @@
 ﻿#pragma once
 #include "x265Encoder.h"
 #include"NiftiMetadata.h"
+#include <qstring.h>
+#include <itkImage.h>
+
+
 
 // 压缩Nifti文件
 void compressNifti(const X265Encoder::EncoderParams& params, const NiftiMetadata& metadata, const bool& restore_flag = false);
@@ -23,3 +27,11 @@ void getVideoInfo(const std::string& filePath, int& width, int& height);
 bool readDimensionsFromTxt(const std::string& txtFilePath, int& width, int& height, int& depth);
 
 
+//ffmpeg命令切片处理为yuv420p
+void runFFmpegCommand(const std::string& tempDir, const std::string& outputYUV,const int& padded_width,const int& padded_height);
+
+//ffmpeg命令hevc解码
+std::vector<unsigned char> runFFmpegCommand(const std::string& inputHevc,const size_t& expectedSize);
+
+//ffmpeg命令读取视频信息
+std::string runFFmpegCommand(const std::string& fielPath);

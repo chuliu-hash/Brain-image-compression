@@ -6,12 +6,13 @@
 #include <itkExtractImageFilter.h>
 #include <itkRescaleIntensityImageFilter.h>
 #include <itkPNGImageIO.h>
+#include "process_function.h"
 
 // 定义图像类型
-using PixelType = float;
+using InputPixelType = float;
 using OutputPixelType = unsigned char;
-using Image3DType = itk::Image<PixelType, 3>;
-using Image2DType = itk::Image<PixelType, 2>;
+using Image3DType = itk::Image<InputPixelType, 3>;
+using Image2DType = itk::Image<InputPixelType, 2>;
 using OutputImageType = itk::Image<OutputPixelType, 2>;
 
 
@@ -70,33 +71,15 @@ void processNiftiToYUV(const std::string& inputFile, const std::string& outputYU
             writer->Update(); // 执行文件写入
         }
 
-        // 第二步：将PNG序列转换为YUV420P
-        // 构建FFmpeg命令
-        std::string ffmpegCmd = "ffmpeg -y"
-           " -loglevel quiet"
-            " -f image2"                    // 使用image2格式读取图片序列
-            " -i " + tempDir + "/slice_%d.png"  // 输入PNG图片序列
-            " -vf pad=" + std::to_string(padded_width) + ":" +
-            std::to_string(padded_height) + // 进行填充确保尺寸是偶数
-            " -pix_fmt yuv420p"            // 输出YUV420P格式
-            " -f rawvideo "                // 输出原始视频格式
-            + outputYUV;                   // 输出文件名
-
-        // 执行FFmpeg命令
-        int result = system(ffmpegCmd.c_str());
-        if (result != 0) {
-            throw std::runtime_error("FFmpeg conversion failed");
-        }
+        //// 第二步：将PNG序列转换为YUV420P
+        runFFmpegCommand(tempDir, outputYUV, padded_width, padded_height);
     }
     catch (const itk::ExceptionObject& e) {
         std::cerr << "ITK error: " << e.what() << std::endl;
-        throw;
     }
     catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
-        throw;
     }
 }
-
 
 

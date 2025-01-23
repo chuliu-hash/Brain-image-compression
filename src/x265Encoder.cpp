@@ -1,6 +1,7 @@
 #include "X265Encoder.h"
 #include <fstream>
 #include<iostream>
+  
 
 
 // 自定义编码参数构造函数
@@ -31,6 +32,8 @@ X265Encoder::X265Encoder(const int& width,const int& height, const EncoderParams
     param->bRepeatHeaders = 1;           // 在每个关键帧前重复写入SPS和PPS头，有利于随机访问
     param->internalCsp = X265_CSP_I420;  // 色彩空间格式：YUV420
     param->internalBitDepth = 8;         // 视频位深：8位/像素/分量
+
+   // param->logLevel = X265_LOG_NONE;    // 日志级别：无日志输出
 
     // 线程设置
     param->frameNumThreads = 16;         // 帧级并行线程数，增加可提高编码速度
@@ -128,8 +131,12 @@ void X265Encoder::encode(const std::string& inputFile, const std::string& output
         }
 
         frameCount++;
-        std::cout << "Encoded " << frameCount << " frames\r" << std::flush;
+        if (frameCount % 50 == 0)
+        {
+            std::cout << "Encoded " << frameCount << " frames" << std::flush;
+        }
     }
+    std::cout << "Total Encoded " << frameCount << " frames" << std::flush;
 
     // 刷新编码器，输出剩余数据
     while ((ret = x265_encoder_encode(encoder, &nals, &numNals, nullptr, nullptr))) {

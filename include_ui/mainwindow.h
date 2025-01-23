@@ -5,12 +5,17 @@
 #include <vtkVolume.h>
 #include"x265Encoder.h"
 #include"NiftiMetadata.h"
+#include"streambuffer.h"
+
+// 前向声明
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
     class MainWindow;
 }
 QT_END_NAMESPACE
+
+
 
 class MainWindow : public QMainWindow
 {
@@ -59,6 +64,9 @@ private:
     NiftiMetadata metadata;
     // X265编码器参数
     X265Encoder::EncoderParams params;
+
+    std::unique_ptr<StreamBuffer> m_coutBuffer;  // 用于重定向 std::cout
+    std::unique_ptr<StreamBuffer> m_cerrBuffer;  // 用于重定向 std::cerr
 
     // 设置参数
     void setParams();
