@@ -21,7 +21,6 @@ set(ITK_DIR "D:/VScode/Capstone_project/third_party/ITK-5.3/lib/cmake/ITK-5.3")
 set(VTK_DIR "D:/VScode/Capstone_project/third_party/VTK-9.3/lib/cmake/vtk-9.3")
 set(Qt6_DIR "D:/Qt/6.5.3/msvc2019_64/lib/cmake/Qt6")
 set(X265_ROOT_DIR "D:/VScode/Capstone_project/third_party/x265")
-set(FFMPEG_ROOT "D:/VScode/Capstone_project/third_party/ffmpeg")  
 
 # 查找 x265 库文件
 find_library(X265_LIBRARY
@@ -60,8 +59,6 @@ add_executable( ${PROJECT_NAME}  WIN32
     ${HEADERS}    # 头文件（.h）
     ${RESOURCE_FILES}   # 资源文件（.qrc）
 )
-
-
 
 # 设置包含目录
 target_include_directories(${PROJECT_NAME} PRIVATE

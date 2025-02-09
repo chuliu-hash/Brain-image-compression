@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include"ui_mainwindow.h"
 #include <QFileDialog>
-#include"worker.h"
-#include"streambuffer.h"
+#include "worker.h"
+#include "streambuffer.h"
 #include <filesystem>
 namespace fs = std::filesystem;
 
@@ -22,19 +22,18 @@ MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)  // 调用基类构造函数
     , ui(new Ui::MainWindow)  // 初始化 ui 指针
 {
-    ui->setupUi(this);  // 设置 UI
-    this->setFixedSize(900, 700);   // 设置固定的窗口大小
 
-    // 创建一个指向 StreamBuffer 的 unique_ptr
+    ui->setupUi(this);  // 设置 UI
+    this->setFixedSize(900, 700);   // 固定窗口大小
+
+    // 创建 StreamBuffer 对象
     m_coutBuffer = std::make_unique<StreamBuffer>(ui->plainTextEdit);
-    // 创建一个指向 StreamBuffer 的 unique_ptr
     m_cerrBuffer = std::make_unique<StreamBuffer>(ui->plainTextEdit);
-    // 将 std::cout 的缓冲区设置为 m_coutBuffer
+    // 替换 std::cout 缓冲区
     std::cout.rdbuf(m_coutBuffer.get());
-    // 将 std::cerr 的缓冲区设置为 m_cerrBuffer
+    // 替换 std::cerr 缓冲区
     std::cerr.rdbuf(m_cerrBuffer.get());
 
-    
 }
 
 // 析构函数

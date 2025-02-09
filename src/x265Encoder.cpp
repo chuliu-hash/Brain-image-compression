@@ -1,7 +1,6 @@
 #include "X265Encoder.h"
 #include <fstream>
 #include<iostream>
-  
 
 
 // 自定义编码参数构造函数
@@ -31,7 +30,7 @@ X265Encoder::X265Encoder(const int& width,const int& height, const EncoderParams
     param->fpsDenom = 1;                 // 帧率分母（分子/分母=实际帧率）
     param->bRepeatHeaders = 1;           // 在每个关键帧前重复写入SPS和PPS头，有利于随机访问
     param->internalCsp = X265_CSP_I420;  // 色彩空间格式：YUV420
-    param->internalBitDepth = 8;         // 视频位深：8位/像素/分量
+    param->internalBitDepth = 8;         // 视频位深：8位
 
    // param->logLevel = X265_LOG_NONE;    // 日志级别：无日志输出
 
@@ -54,7 +53,7 @@ X265Encoder::X265Encoder(const int& width,const int& height, const EncoderParams
         param->rc.qp = 0;               // 无损编码时QP设为0
         param->bLossless = 1;           // 启用无损编码模式
     }
-    else if (params.mode == "CBR" ) {
+    else if (params.mode == "ABR" ) {
         param->rc.rateControlMode = X265_RC_ABR;  // 平均码率模式(Average Bitrate)
         param->rc.bitrate = params.Bitrate;    // 目标平均码率(kbps)
         param->rc.vbvMaxBitrate = params.Bitrate;  // VBV最大码率限制

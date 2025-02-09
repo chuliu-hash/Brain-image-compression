@@ -95,7 +95,7 @@
     </property>
     <item>
      <property name="text">
-      <string>CBR</string>
+      <string>ABR</string>
      </property>
     </item>
     <item>
@@ -401,10 +401,10 @@
    <widget class="QCheckBox" name="checkBox_SAO">
     <property name="geometry">
      <rect>
-      <x>770</x>
-      <y>300</y>
-      <width>91</width>
-      <height>31</height>
+      <x>750</x>
+      <y>310</y>
+      <width>111</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -413,7 +413,7 @@
      </font>
     </property>
     <property name="text">
-     <string>SAO</string>
+     <string>样本自适应补偿</string>
     </property>
     <property name="checked">
      <bool>true</bool>
@@ -422,10 +422,10 @@
    <widget class="QCheckBox" name="checkBox_LF">
     <property name="geometry">
      <rect>
-      <x>770</x>
-      <y>330</y>
-      <width>93</width>
-      <height>31</height>
+      <x>750</x>
+      <y>340</y>
+      <width>111</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -434,7 +434,7 @@
      </font>
     </property>
     <property name="text">
-     <string>环路滤波</string>
+     <string>去方块滤波</string>
     </property>
     <property name="checked">
      <bool>true</bool>
@@ -443,10 +443,10 @@
    <widget class="QCheckBox" name="checkBox_SS">
     <property name="geometry">
      <rect>
-      <x>770</x>
-      <y>360</y>
-      <width>91</width>
-      <height>31</height>
+      <x>750</x>
+      <y>370</y>
+      <width>111</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
