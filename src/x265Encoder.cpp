@@ -109,6 +109,7 @@ void X265Encoder::encode(const std::string& inputFile, const std::string& output
     std::ifstream inFile(inputFile, std::ios::binary);
     std::ofstream outFile(outputFile, std::ios::binary);
 
+
     if (!inFile || !outFile) {
         throw std::runtime_error("Failed to open input or output file");
     }

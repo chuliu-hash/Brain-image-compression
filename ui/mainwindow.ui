@@ -413,7 +413,7 @@
      </font>
     </property>
     <property name="text">
-     <string>样本自适应补偿</string>
+     <string>样本自适应偏移</string>
     </property>
     <property name="checked">
      <bool>true</bool>
