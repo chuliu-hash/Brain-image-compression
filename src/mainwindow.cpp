@@ -40,8 +40,8 @@ MainWindow::MainWindow(QWidget* parent)
 MainWindow::~MainWindow()
 {
     delete ui;  // 释放 ui 指针
-}
 
+}
 
 
 void MainWindow::on_openfile_action_triggered()
@@ -160,13 +160,15 @@ void MainWindow::startCompression()
 {
     // 创建一个新的线程和一个Worker对象
     QThread *thread = new QThread;
-    Worker *worker = new Worker(params, metadata);
+    Worker *worker = new Worker();
 
     // 将Worker对象移动到新线程中
     worker->moveToThread(thread);
 
     // 连接信号和槽
-    connect(thread, &QThread::started, worker, &Worker::compress);
+    connect(thread, &QThread::started, worker, [worker, this]() {
+        worker->compress(this->params, this->metadata);
+    });
     connect(worker, &Worker::finished, thread, &QThread::quit);
     connect(worker, &Worker::finished, worker, &Worker::deleteLater);
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
@@ -177,28 +179,7 @@ void MainWindow::startCompression()
 
 }
 
-void MainWindow::startBatchCompression(const QList<NiftiMetadata>& metadataList)
-{
-    // 创建一个新的线程和一个Worker对象
-    QThread *thread = new QThread;
-    Worker *worker = new Worker(params);
-
-    // 将Worker对象移动到新线程中
-    worker->moveToThread(thread);
-
-    // 连接信号和槽
-    connect(thread, &QThread::started, worker, [worker, metadataList]() {
-        worker->compressBatch(metadataList);
-    });
-    connect(worker, &Worker::finished, thread, &QThread::quit);
-    connect(worker, &Worker::finished, worker, &Worker::deleteLater);
-    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-    connect(worker, &Worker::compressionFinished, this, &MainWindow::do_BatchCompressionProgressed);
-    connect(worker, &Worker::finished, this, &MainWindow::do_BatchCompressionFinished);
-    thread->start();
-}
-
-void MainWindow::do_CompressionFinished(const QString &message)
+void MainWindow::do_CompressionFinished(const QString& message)
 {
     // 在文本框中添加压缩完成的消息
     ui->plainTextEdit->appendPlainText(message);
@@ -215,6 +196,35 @@ void MainWindow::do_CompressionFinished(const QString &message)
     initializeVTKRenderer(ui->widget_restore, NiftiPath);
 }
 
+
+void MainWindow::startBatchCompression(const QList<NiftiMetadata>& metadataList)
+{
+    // 创建一个新的线程和一个Worker对象
+    QThread *thread = new QThread;
+    Worker *worker = new Worker();
+
+    // 将Worker对象移动到新线程中
+    worker->moveToThread(thread);
+
+    // 连接信号和槽
+    connect(thread, &QThread::started, worker, [this,worker, metadataList]() {
+        worker->compressBatch(this->params, metadataList);
+    });
+    connect(worker, &Worker::finished, thread, &QThread::quit);
+    connect(worker, &Worker::finished, worker, &Worker::deleteLater);
+    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+    connect(worker, &Worker::compressionFinished, this, &MainWindow::do_BatchCompressionProgressed);
+    connect(worker, &Worker::finished, this, &MainWindow::do_BatchCompressionFinished);
+    thread->start();
+}
+
+
+void MainWindow::do_BatchCompressionProgressed(const QString& message)
+{
+    // 在文本框中添加批量压缩进度的消息
+    ui->plainTextEdit->appendPlainText(message);
+}
+
 void MainWindow::do_BatchCompressionFinished()
 {
     // 在文本框中添加批量压缩完成的消息
@@ -223,11 +233,38 @@ void MainWindow::do_BatchCompressionFinished()
     enableComponent();
 }
 
-void MainWindow::do_BatchCompressionProgressed(const QString &message)
+void MainWindow::startBatchReconstruction(const QStringList& filePaths)
 {
-    // 在文本框中添加批量压缩进度的消息
+    // 创建新线程和Worker对象
+    QThread* thread = new QThread;
+    Worker* worker = new Worker();
+
+    worker->moveToThread(thread);
+
+    // 连接信号和槽
+    connect(thread, &QThread::started, worker, [worker, filePaths]() {
+        worker->reconstructBatch(filePaths);
+        });
+    connect(worker, &Worker::finished, thread, &QThread::quit);
+    connect(worker, &Worker::finished, worker, &Worker::deleteLater);
+    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+    connect(worker, &Worker::reconstructionFinished, this, &MainWindow::do_BatchReconstructionProgressed);
+    connect(worker, &Worker::finished, this, &MainWindow::do_BatchReconstructionFinished);
+    thread->start();
+}
+void MainWindow::do_BatchReconstructionProgressed(const QString& message)
+{
+    // 更新进度文本框
     ui->plainTextEdit->appendPlainText(message);
 }
+
+void MainWindow::do_BatchReconstructionFinished()
+{
+    // 批量重建完成，输出文件到reconstruction目录
+    ui->plainTextEdit->appendPlainText("批量重建完成，输出文件到reconstruction目录");
+    enableComponent();
+}
+
 
 void MainWindow::initializeVTKRenderer(QVTKOpenGLNativeWidget * widget, const std::string& filePath) {
     // 初始化 VTK 渲染器
@@ -319,6 +356,25 @@ void MainWindow::on_batchcompress_action_triggered()
     ui->plainTextEdit->appendPlainText("开始批量压缩");
     startBatchCompression(metadataList);
 }
+
+void MainWindow::on_restore_action_triggered()
+{
+    // 获取打开文件对话框中选择的文件路径
+    QStringList filePaths = QFileDialog::getOpenFileNames(
+        this,
+        "选择若干个h265文件",
+        "",
+        "h265 Files (*.h265 *.hevc)"
+    );
+    if (filePaths.isEmpty()) {
+        return;
+    }
+    unenableComponent();
+    ui->plainTextEdit->appendPlainText("开始批量重建");
+    startBatchReconstruction(filePaths);
+}
+
+
 void MainWindow::unenableComponent()
 {
     // 禁用组件
@@ -336,51 +392,3 @@ void MainWindow::enableComponent()
     ui->restore_action->setEnabled(true);
 }
 
-void MainWindow::on_restore_action_triggered()
-{
-    // 获取打开文件对话框中选择的文件路径
-    QStringList filePaths = QFileDialog::getOpenFileNames(
-        this,
-        "选择若干个h265文件",
-        "",
-        "h265 Files (*.h265 *.hevc)"
-        );
-    if (filePaths.isEmpty()) {
-        return;
-    }
-    unenableComponent();
-    ui->plainTextEdit->appendPlainText("开始批量重建");
-    startBatchReconstruction(filePaths);
-}
-
-void MainWindow::startBatchReconstruction(const QStringList& filePaths)
-{
-    // 创建新线程和Worker对象
-    QThread *thread = new QThread;
-    Worker *worker = new Worker();
-
-    worker->moveToThread(thread);
-
-    // 连接信号和槽
-    connect(thread, &QThread::started, worker, [worker, filePaths]() {
-        worker->reconstructBatch(filePaths);
-    });
-    connect(worker, &Worker::finished, thread, &QThread::quit);
-    connect(worker, &Worker::finished, worker, &Worker::deleteLater);
-    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-    connect(worker, &Worker::reconstructionFinished, this, &MainWindow::do_BatchReconstructionProgressed);
-    connect(worker, &Worker::finished, this, &MainWindow::do_BatchReconstructionFinished);
-    thread->start();
-}
-void MainWindow::do_BatchReconstructionProgressed(const QString &message)
-{
-    // 更新进度文本框
-    ui->plainTextEdit->appendPlainText(message);
-}
-
-void MainWindow::do_BatchReconstructionFinished()
-{
-    // 批量重建完成，输出文件到reconstruction目录
-    ui->plainTextEdit->appendPlainText("批量重建完成，输出文件到reconstruction目录");
-    enableComponent();
-}

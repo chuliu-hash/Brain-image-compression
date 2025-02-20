@@ -17,7 +17,6 @@ public:
     int bitsPerPixel;          // 每个像素的位数（例如：8位、16位、32位），用于描述图像的色深
     size_t totalVoxels;        // 总体素数（即图像中的像素总数），用于计算图像的大小和处理效率
 
-
    NiftiMetadata() = default;
 
    // 设置Nifti元数据

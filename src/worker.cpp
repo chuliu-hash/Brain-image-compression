@@ -1,17 +1,17 @@
 #include"worker.h"
 #include"process_function.h"
 
-void Worker::compress()
+void Worker::compress(const X265Encoder::EncoderParams& params, const NiftiMetadata& metadata)
 {
     // 调用压缩函数，对m_params和m_metadata进行压缩
-    compressNifti(m_params, m_metadata, true);
+    compressNifti(params, metadata, true);
 
     // 发送压缩完成信号，提示压缩完成，输出H265文件到out目录
     emit compressionFinished("压缩完成,输出H265文件到out目录");
 
 }
 
-void Worker::compressBatch(const QList<NiftiMetadata>& metadataList)
+void Worker::compressBatch(const X265Encoder::EncoderParams& params, const QList<NiftiMetadata>& metadataList)
 {
     // 获取metadataList的大小
     int totalFiles = metadataList.size();
@@ -21,7 +21,7 @@ void Worker::compressBatch(const QList<NiftiMetadata>& metadataList)
     for (const auto& metadata : metadataList) {
         currentFile++;
         // 调用压缩函数，对metadata进行压缩
-        compressNifti(m_params, metadata);
+        compressNifti(params, metadata);
         // 构造进度信息
         QString progressInfo = QString("%1/%2").arg(currentFile).arg(totalFiles);
         // 发送压缩完成信号，提示压缩完成，并显示进度信息
