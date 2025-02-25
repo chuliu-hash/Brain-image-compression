@@ -434,7 +434,7 @@
      </font>
     </property>
     <property name="text">
-     <string>去方块滤波</string>
+     <string>去块滤波器</string>
     </property>
     <property name="checked">
      <bool>true</bool>

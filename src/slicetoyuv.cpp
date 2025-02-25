@@ -8,8 +8,13 @@
 #include <itkPNGImageIO.h>
 #include "process_function.h"
 
+ /*如果 NIfTI 文件中包含 scl_slope 和 scl_inter 字段，
+ ITK 会自动应用这些缩放和偏移参数，将原始数据转换为浮点类型（如 float），范围可能变为 [0, 1]
+ 公式：scaled_value = raw_value * scl_slope + scl_inter
+  */
+
 // 定义图像类型
-using InputPixelType = float;
+using InputPixelType = float;  
 using OutputPixelType = unsigned char;
 using Image3DType = itk::Image<InputPixelType, 3>;
 using Image2DType = itk::Image<InputPixelType, 2>;
@@ -45,7 +50,6 @@ void processNiftiToYUV(const std::string& inputFile, const std::string& outputYU
         rescaler->SetOutputMaximum(255);   // 设置输出最大值
 
         // 第一步：保存PNG序列
-        std::vector<std::string> pngFiles; // 存储PNG文件名
         for (unsigned int z = 0; z < depth; ++z) {
             // 设置提取区域，提取当前切片
             Image3DType::RegionType extractRegion = region;
@@ -61,7 +65,6 @@ void processNiftiToYUV(const std::string& inputFile, const std::string& outputYU
 
             // 生成PNG文件名并保存
             std::string pngFilename = tempDir + "/slice_" + std::to_string(z) + ".png";
-            pngFiles.push_back(pngFilename); // 存储PNG文件名
 
             auto writer = itk::ImageFileWriter<OutputImageType>::New();
             auto pngIO = itk::PNGImageIO::New();  // 创建PNG IO

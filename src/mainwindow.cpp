@@ -160,7 +160,7 @@ void MainWindow::startCompression()
 {
     // 创建一个新的线程和一个Worker对象
     QThread *thread = new QThread;
-    Worker *worker = new Worker();
+    Worker *worker = new Worker;
 
     // 将Worker对象移动到新线程中
     worker->moveToThread(thread);
@@ -201,7 +201,7 @@ void MainWindow::startBatchCompression(const QList<NiftiMetadata>& metadataList)
 {
     // 创建一个新的线程和一个Worker对象
     QThread *thread = new QThread;
-    Worker *worker = new Worker();
+    Worker *worker = new Worker;
 
     // 将Worker对象移动到新线程中
     worker->moveToThread(thread);
@@ -237,7 +237,7 @@ void MainWindow::startBatchReconstruction(const QStringList& filePaths)
 {
     // 创建新线程和Worker对象
     QThread* thread = new QThread;
-    Worker* worker = new Worker();
+    Worker* worker = new Worker;
 
     worker->moveToThread(thread);
 
