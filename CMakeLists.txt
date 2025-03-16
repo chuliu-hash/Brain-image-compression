@@ -21,7 +21,7 @@ set(ITK_DIR "D:/VScode/Capstone_project/third_party/ITK-5.3/lib/cmake/ITK-5.3")
 set(VTK_DIR "D:/VScode/Capstone_project/third_party/VTK-9.3/lib/cmake/vtk-9.3")
 set(Qt6_DIR "D:/Qt/6.5.3/msvc2019_64/lib/cmake/Qt6")
 set(X265_ROOT_DIR "D:/VScode/Capstone_project/third_party/x265")
-
+set(matplot++_DIR "D:/VScode/Capstone_project/third_party/Matplot/lib/cmake/Matplot++")
 # 查找 x265 库文件
 find_library(X265_LIBRARY
     NAMES x265 libx265  # 库的名称
@@ -32,6 +32,7 @@ find_library(X265_LIBRARY
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)  # 查找 Qt6 的核心、GUI 和 Widgets 模块
 find_package(VTK REQUIRED)  # 查找 VTK 库
 find_package(ITK REQUIRED)  # 查找 ITK 库
+find_package(matplot++ REQUIRED)
 
 # 定义 .ui 文件列表
 set(UI_FILES
@@ -53,7 +54,7 @@ file(GLOB HEADERS "include_ui/*.h" "include/*.h")
 file(GLOB SOURCES "src/*.cpp")
 
 # 添加可执行文件，并指定源文件、生成的 UI 头文件和 UI 头文件
-add_executable( ${PROJECT_NAME}  WIN32
+add_executable( ${PROJECT_NAME} 
     ${SOURCES}    # 源文件（.cpp）
     ${UI_HEADERS} # 生成的 UI 头文件（ui_*.h）
     ${HEADERS}    # 头文件（.h）
@@ -75,4 +76,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ${VTK_LIBRARIES}  # VTK 库
     ${ITK_LIBRARIES}  # ITK 库
     ${X265_LIBRARY}  # x265 库
+    Matplot++::matplot 
 )

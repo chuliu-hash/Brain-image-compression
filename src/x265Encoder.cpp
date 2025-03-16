@@ -33,6 +33,7 @@ X265Encoder::X265Encoder(const int& width,const int& height, const EncoderParams
     param->internalBitDepth = 8;         // 视频位深：8位
 
    // param->logLevel = X265_LOG_NONE;    // 日志级别：无日志输出
+    param->bEnablePsnr = 1;              // 输出PSNR
 
     // 线程设置
     param->frameNumThreads = 16;         // 帧级并行线程数，增加可提高编码速度
