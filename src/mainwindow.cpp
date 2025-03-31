@@ -3,6 +3,7 @@
 #include <QFileDialog>
 #include "worker.h"
 #include "streambuffer.h"
+#include "process_function.h"
 #include <filesystem>
 namespace fs = std::filesystem;
 
@@ -120,7 +121,7 @@ void MainWindow::on_pushButton_compress_clicked()
     if(!metadata.filePath.empty())
     {
         // 在plainTextEdit中添加文本
-        ui->plainTextEdit->appendPlainText("开始压缩文件");
+        ui->plainTextEdit->appendPlainText("\n开始压缩文件");
         // 禁用组件
         unenableComponent();
         // 开始压缩
@@ -185,6 +186,12 @@ void MainWindow::do_CompressionFinished(const QString& message)
     ui->plainTextEdit->appendPlainText(message);
     // 启用组件
     enableComponent();
+  
+
+    std::string log_message =readlog();
+    ui->plainTextEdit->appendPlainText("\nx265编码器压缩日志文件：");
+    ui->plainTextEdit->appendPlainText(log_message.c_str());
+
     // 打印H265数据
     printH265data();
 
@@ -348,8 +355,6 @@ void MainWindow::on_batchcompress_action_triggered()
     for (const QString& filePath : filePaths) {
         metadata_temp.setNiftiMetadata(filePath.toStdString()); // 设置 metadata
         metadataList.append(metadata_temp); // 添加到列表
-
-        // 在 UI 中显示文件信息
     }
 
     // 调用批量压缩函数

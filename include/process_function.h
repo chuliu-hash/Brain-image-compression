@@ -26,6 +26,9 @@ void getVideoInfo(const std::string& filePath, int& width, int& height);
 // 从txt文件中读取维度信息
 bool readDimensionsFromTxt(const std::string& txtFilePath, int& width, int& height, int& depth);
 
+// 从txt文件中读取log信息
+std::string readlog();
+
 
 //ffmpeg命令切片处理为yuv420p
 void runFFmpegCommand(const std::string& tempDir, const std::string& outputYUV,const int& padded_width,const int& padded_height);
@@ -35,3 +38,4 @@ std::vector<unsigned char> runFFmpegCommand(const std::string& inputHevc,const s
 
 //ffmpeg命令读取视频信息
 std::string runFFmpegCommand(const std::string& fielPath);
+

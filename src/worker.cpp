@@ -3,7 +3,7 @@
 
 void Worker::compress(const X265Encoder::EncoderParams& params, const NiftiMetadata& metadata)
 {
-    // 调用压缩函数，对m_params和m_metadata进行压缩
+    // 调用压缩函数，对params和metadata进行压缩
     compressNifti(params, metadata, true);
 
     // 发送压缩完成信号，提示压缩完成，输出H265文件到out目录

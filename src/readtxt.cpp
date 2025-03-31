@@ -2,6 +2,9 @@
 #include <fstream>
 #include <string>
 #include <regex>
+#include <sstream>
+#include <stdexcept>
+#include"process_function.h"
 
 bool readDimensionsFromTxt(const std::string& txtFilePath, int& width, int& height, int& depth) {
     // 打开TXT文件
@@ -32,4 +35,32 @@ bool readDimensionsFromTxt(const std::string& txtFilePath, int& width, int& heig
     // 未找到 Dimensions 或格式不正确，输出错误信息
     std::cerr << "Dimensions not found or invalid format in TXT file: " << txtFilePath << std::endl;
     return false;
+}
+
+
+
+
+/**
+ * @brief 读取当前目录下的x265_log.txt文件内容
+ * @return std::string 包含文件所有内容的字符串
+ */
+std::string readlog() {
+    const std::string filename = "x265_log.txt";
+    std::ifstream file(filename);
+
+    // 检查文件是否成功打开
+    if (!file.is_open()) {
+        throw std::runtime_error("无法打开文件: " + filename);
+    }
+
+    // 使用stringstream高效读取文件内容
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+
+    // 检查读取过程中是否发生错误
+    if (!file) {
+        throw std::runtime_error("读取文件时发生错误: " + filename);
+    }
+
+    return buffer.str();
 }
