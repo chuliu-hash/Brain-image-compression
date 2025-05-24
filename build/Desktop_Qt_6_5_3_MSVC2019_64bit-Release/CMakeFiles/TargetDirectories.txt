@@ -1,5 +1,0 @@
-D:/VScode/Capstone_project/CMakeProject1/build/Desktop_Qt_6_5_3_MSVC2019_64bit-Release/CMakeFiles/CMakeProject1.dir
-D:/VScode/Capstone_project/CMakeProject1/build/Desktop_Qt_6_5_3_MSVC2019_64bit-Release/CMakeFiles/edit_cache.dir
-D:/VScode/Capstone_project/CMakeProject1/build/Desktop_Qt_6_5_3_MSVC2019_64bit-Release/CMakeFiles/rebuild_cache.dir
-D:/VScode/Capstone_project/CMakeProject1/build/Desktop_Qt_6_5_3_MSVC2019_64bit-Release/CMakeFiles/CMakeProject1_autogen_timestamp_deps.dir
-D:/VScode/Capstone_project/CMakeProject1/build/Desktop_Qt_6_5_3_MSVC2019_64bit-Release/CMakeFiles/CMakeProject1_autogen.dir
