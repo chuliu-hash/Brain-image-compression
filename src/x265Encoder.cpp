@@ -6,7 +6,7 @@
 // 自定义编码参数构造函数
 X265Encoder::X265Encoder(const int& width,const int& height, const EncoderParams& params) {
     // 计算帧大小（YUV420格式：Y平面全分辨率，U和V平面半分辨率）
-    frameSize = width * height * 3 / 2;
+    frameSize = width * height * 3 / 2; 
     frameBuffer.resize(frameSize);
 
     // 配置x265参数
@@ -34,6 +34,8 @@ X265Encoder::X265Encoder(const int& width,const int& height, const EncoderParams
 
    // param->logLevel = X265_LOG_NONE;    // 日志级别：无日志输出
     param->bEnablePsnr = 1;              // 输出PSNR
+    param->bEnableSsim = 1;             // 输出SSIM
+ 
 
     // 线程设置
     param->frameNumThreads = 16;         // 帧级并行线程数，增加可提高编码速度

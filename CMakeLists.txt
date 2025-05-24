@@ -54,7 +54,7 @@ file(GLOB HEADERS "include_ui/*.h" "include/*.h")
 file(GLOB SOURCES "src/*.cpp")
 
 # 添加可执行文件，并指定源文件、生成的 UI 头文件和 UI 头文件
-add_executable( ${PROJECT_NAME} WIN32
+add_executable( ${PROJECT_NAME}  WIN32
     ${SOURCES}    # 源文件（.cpp）
     ${UI_HEADERS} # 生成的 UI 头文件（ui_*.h）
     ${HEADERS}    # 头文件（.h）

@@ -1,7 +1,6 @@
 ﻿#include"process_function.h"
 #include"x265Encoder.h"
 #include"NiftiMetadata.h"
-#include<iostream>
 int test()
 {
 
@@ -14,4 +13,6 @@ int test()
     bool restore_flag = true; // 是否需要恢复NIfTI文件
     compressNifti(params, metadata, restore_flag); // 调用压缩函数
     return 0;
+
+  // processH265ToNifti("D:/Download/1.h265", "D:/Download/2.nii");
 }

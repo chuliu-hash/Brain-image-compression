@@ -40,10 +40,7 @@ bool readDimensionsFromTxt(const std::string& txtFilePath, int& width, int& heig
 
 
 
-/**
- * @brief 读取当前目录下的x265_log.txt文件内容
- * @return std::string 包含文件所有内容的字符串
- */
+
 std::string readlog() {
     const std::string filename = "x265_log.txt";
     std::ifstream file(filename);

@@ -40,11 +40,108 @@ void processH265ToNifti(const std::string& inputHevc, const std::string& outputN
         // 3. 创建临时缓冲区以存储填充后的数据
         std::vector<InputPixelType> paddedBuffer(padded_width * padded_height * depth);
 
-        // 读取填充后的数据
+
         size_t paddedSize = padded_width * padded_height * depth;
 
-        // 3. 执行FFmpeg命令并读取数据
-        paddedBuffer = runFFmpegCommand(inputHevc, paddedSize);
+        // 读取填充后的数据
+        std::string ffmpegCmd = "ffmpeg -y"
+                                " -loglevel quiet"
+                                " -i " + inputHevc +
+                                " -f rawvideo"
+                                " -pix_fmt gray"  // 输出为灰度格式
+                                " pipe:1";        // 将输出发送到管道
+
+
+
+
+        // 安全属性设置
+        SECURITY_ATTRIBUTES saAttr = { sizeof(SECURITY_ATTRIBUTES) };
+        saAttr.bInheritHandle = TRUE;
+        saAttr.lpSecurityDescriptor = NULL;
+
+        // 创建管道
+        HANDLE hReadPipe = NULL, hWritePipe = NULL;
+        if (!CreatePipe(&hReadPipe, &hWritePipe, &saAttr, 0)) {
+            throw std::runtime_error("CreatePipe failed: " + std::to_string(GetLastError()));
+        }
+
+        // 确保读端不被子进程继承
+        SetHandleInformation(hReadPipe, HANDLE_FLAG_INHERIT, 0);
+
+        // 进程启动信息
+        STARTUPINFOA si = { sizeof(si) };
+        PROCESS_INFORMATION pi = { 0 };
+        si.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
+        si.wShowWindow = SW_HIDE;
+        si.hStdOutput = hWritePipe;
+        si.hStdError = hWritePipe;
+
+        // 创建进程
+        BOOL success = CreateProcessA(
+            NULL,                   // 应用程序名称（使用命令行参数指定）
+            const_cast<LPSTR>(ffmpegCmd.c_str()), // 命令行
+            NULL,                   // 进程安全属性
+            NULL,                   // 线程安全属性
+            TRUE,                   // 继承句柄
+            CREATE_NO_WINDOW,       // 创建标志
+            NULL,                   // 环境变量
+            NULL,                   // 当前目录
+            &si,                    // 启动信息
+            &pi                     // 进程信息
+            );
+
+        // 立即关闭不再需要的写管道句柄
+        CloseHandle(hWritePipe);
+        hWritePipe = NULL;
+
+        if (!success) {
+            CloseHandle(hReadPipe);
+            throw std::runtime_error("CreateProcess failed: " + std::to_string(GetLastError()));
+        }
+
+        try {
+            // 读取管道数据
+            paddedBuffer.resize(paddedSize);
+            DWORD totalBytesRead = 0;
+            while (totalBytesRead < paddedSize) {
+                DWORD bytesRead = 0;
+                if (!ReadFile(hReadPipe, paddedBuffer.data() + totalBytesRead,
+                              static_cast<DWORD>(paddedSize - totalBytesRead), &bytesRead, NULL)) {
+                    DWORD err = GetLastError();
+                    if (err != ERROR_BROKEN_PIPE) { // 正常结束会触发管道断开
+                        throw std::runtime_error("ReadFile failed: " + std::to_string(err));
+                    }
+                    break;
+                }
+
+                if (bytesRead == 0) break; // 管道已关闭
+                totalBytesRead += bytesRead;
+            }
+
+            // 检查数据完整性
+            if (totalBytesRead != paddedSize) {
+                std::cerr << "Warning: Expected " << paddedSize << " bytes, got " << totalBytesRead << std::endl;
+                paddedBuffer.resize(totalBytesRead); // 调整缓冲区大小
+            }
+
+            // 等待进程退出（带超时机制）
+            const DWORD waitTimeout = 1; // 1秒超时
+            if (WaitForSingleObject(pi.hProcess, waitTimeout) == WAIT_TIMEOUT) {
+
+                TerminateProcess(pi.hProcess, 1);
+            }
+        }
+        catch (...) {
+            // 异常时确保资源释放
+            if (pi.hProcess) TerminateProcess(pi.hProcess, 1);
+            throw;
+        }
+
+        // 清理资源
+        if (hReadPipe) CloseHandle(hReadPipe);
+        if (pi.hThread) CloseHandle(pi.hThread);
+        if (pi.hProcess) CloseHandle(pi.hProcess);
+
 
 
         // 4. 创建输入和输出图像对象（使用原始尺寸）

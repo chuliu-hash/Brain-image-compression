@@ -19,7 +19,7 @@ void compressNifti(const X265Encoder::EncoderParams& params,  const NiftiMetadat
     std::string inputNifti  = metadata.filePath; // 输入的NIfTI文件路径
     std::string outputYUV = "temp.yuv";          // 输出的YUV文件路径
     std::string outputH265 =(outputDir / (inputStem + ".h265")).string();   // 输出的H.265文件路径
-    std::string outputNifti =    inputStem + "_restored.nii";   // 输出的NIfTI文件路径（恢复后的）
+    std::string outputNifti =  inputStem + "_restored.nii";   // 输出的NIfTI文件路径（恢复后的）
 
     // 获取原始图像维度
     int width = metadata.width;   // 图像宽度
@@ -33,7 +33,7 @@ void compressNifti(const X265Encoder::EncoderParams& params,  const NiftiMetadat
     // 调用函数将NIfTI图像转换为YUV420P格式
     processNiftiToYUV(inputNifti, outputYUV, padded_width, padded_height);
 
-    // 调用函数将YUV格式转换为H.265格式
+    // 调用函数将YUV格式压缩为H.265格式
     processYUVtoh265(padded_width, padded_height, outputYUV, outputH265, params);
 
     if (restore_flag)
