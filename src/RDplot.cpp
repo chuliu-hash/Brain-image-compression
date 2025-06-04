@@ -1,11 +1,11 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include <matplot/matplot.h> // 用于绘图的库
+#include <matplot/matplot.h> 
 
 
 void psnr_plot() {
-
+ // 相关数据由编码器日志文件和输出信息获得，此处数据是记录数据后手动输入，仅供绘图参考
 	std::vector<double> x265_rates = { 0.2, 0.4, 0.6, 0.8, 1.0 }; // x265的码率 (kbps)
 	std::vector<double> x265_psnrs = { 55.1, 58.3, 59.9, 61.8,62.7 }; // x265的PSNR (dB)
 
@@ -55,7 +55,7 @@ void psnr_plot() {
 
 
 void ssim_plot() {
-
+    // 相关数据由编码器日志文件和输出信息获得，此处数据是记录数据后手动输入，仅供绘图参考
     std::vector<double> x265_rates = { 0.2, 0.4, 0.6, 0.8, 1.0 }; // x265的码率 (kbps)
     std::vector<double> x265_ssims = { 28.2, 30.3, 32.9, 35.8,40.8 }; // x265的SSIM (dB)
 

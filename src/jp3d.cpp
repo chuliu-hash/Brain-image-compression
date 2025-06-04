@@ -11,7 +11,7 @@ typedef itk::ImageFileReader<ImageType> ReaderType;
 int jp3d()
 {
     // 固定文件路径
-    const char* inputFileName = "D:/Download/1.nii"; // 输入的 NIfTI 文件路径
+    const char* inputFileName = "original.nii"; // 输入的 NIfTI 文件路径
     const char* outputRawFileName = "original.bin"; // 输出的原始二进制文件路径
     const char* outputImgFileName = "original.img"; // 输出的图像特性文件路径
     const char* outputJp3dFileName = "compressed.jp3d"; // 输出的 JP3D 文件路径
